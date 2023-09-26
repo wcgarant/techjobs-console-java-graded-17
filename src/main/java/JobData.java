@@ -75,7 +75,7 @@ public class JobData {
 
             String aValue = row.get(column);
 
-            if (aValue.contains(value)) {
+            if (aValue.toLowerCase().contains(value.toLowerCase())) {
                 jobs.add(row);
             }
         }
@@ -94,9 +94,39 @@ public class JobData {
         // load data, if not already loaded
         loadData();
 
-        // TODO - implement this method
-        return null;
+        ArrayList<HashMap<String, String>> matchingJobs = new ArrayList<>();
+
+        for (HashMap<String, String> row : allJobs) {
+            boolean isMatch = false;
+
+            for (String column : row.keySet()) {
+                String columnValue = row.get(column);
+
+                if (columnValue != null && columnValue.toLowerCase().contains(value.toLowerCase())) {
+                    isMatch = true;
+                    break; // Break out of the loop if a match is found in any column
+                }
+            }
+
+            if (isMatch) {
+                // Check if the job is already in the results
+                boolean isDuplicate = false;
+                for (HashMap<String, String> existingJob : matchingJobs) {
+                    if (existingJob.equals(row)) {
+                        isDuplicate = true;
+                        break; // Skip duplicates
+                    }
+                }
+
+                if (!isDuplicate) {
+                    matchingJobs.add(row);
+                }
+            }
+        }
+
+        return matchingJobs;
     }
+
 
     /**
      * Read in data from a CSV file and store it in a list
